@@ -118,61 +118,87 @@ def generar_imagen_campeon(player_avatar_base64, player_name, torneo, nombre_ima
 def generar_imagen_torneo(fecha, juego, pais, plataforma, modalidad, hora, id_torneo, alcance, costo, output_filename):
     fondo = Image.open("imagenes/tournament.jpg")
     draw = ImageDraw.Draw(fondo)
+
     fuente_info = ImageFont.truetype("/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf", size=60)
     fuente_adicional = ImageFont.truetype("/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf", size=150)
     fuente_guia_inscripcion = ImageFont.truetype("/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf", size=50)
+
+    # Fecha en la esquina superior izquierda
     texto_fecha = "Fecha: " + fecha
     posicion_fecha = (25, 25)
     draw.text(posicion_fecha, texto_fecha, fill="white", font=fuente_info)
+
+    # Texto país - juego - plataforma centrado
     texto_pais_juego_plataforma = f"{pais} - {juego} - {plataforma}"
-    texto_alcance = f"{alcance}"
-    ancho_texto_alcance, alto_texto_alcance = draw.textsize(texto_alcance, font=fuente_guia_inscripcion)
     ancho_texto, alto_texto = draw.textsize(texto_pais_juego_plataforma, font=fuente_info)
     posicion_pais_juego_plataforma = ((fondo.width - ancho_texto) // 2, 500)
     draw.text(posicion_pais_juego_plataforma, texto_pais_juego_plataforma, fill="white", font=fuente_info)
 
-    texto_hora = f"Hora del Torneo: {hora}"
-    ancho_texto_hora, alto_texto_hora = draw.textsize(texto_hora, font=fuente_info)
-    padding_x = 30
-    padding_y = 20
-    rect_x1 = (fondo.width - ancho_texto_hora) // 2 - padding_x
-    rect_y1 = 500 + alto_texto + 50
-    rect_x2 = rect_x1 + ancho_texto_hora + padding_x * 2
-    rect_y2 = rect_y1 + alto_texto_hora + padding_y * 2
-
-    radius = 10
-    draw.rounded_rectangle([rect_x1, rect_y1, rect_x2, rect_y2], radius=radius, fill="white")
-    posicion_hora_texto = ((fondo.width - ancho_texto_hora) // 2, rect_y1 + ((rect_y2 - rect_y1 - alto_texto_hora) // 2)
-)
-    draw.text(posicion_hora_texto, texto_hora, fill="black", font=fuente_info)
-
-    texto_modalidad = modalidad
-    ancho_texto_modalidad, alto_texto_modalidad = draw.textsize(texto_modalidad, font=fuente_info)
-    rect_mod_x1 = (fondo.width - ancho_texto_modalidad) // 2 - padding_x
-    rect_mod_y1 = rect_y2 + 25
-    rect_mod_x2 = rect_mod_x1 + ancho_texto_modalidad + padding_x * 2
-    rect_mod_y2 = rect_mod_y1 + alto_texto_modalidad + padding_y * 2
-
-    draw.rounded_rectangle([rect_mod_x1, rect_mod_y1, rect_mod_x2, rect_mod_y2], radius=radius, fill="white")
-    posicion_modalidad_texto = ((fondo.width - ancho_texto_modalidad) // 2, rect_mod_y1 + ((rect_mod_y2 - rect_mod_y1 - alto_texto_modalidad) // 2))
-    draw.text(posicion_modalidad_texto, texto_modalidad, fill="black", font=fuente_info)
-
+    # Texto "TORNEO" grande
     texto_adicional = "TORNEO"
     ancho_texto_adicional, alto_texto_adicional = draw.textsize(texto_adicional, font=fuente_adicional)
     posicion_texto_adicional = ((fondo.width - ancho_texto_adicional) // 2, 300)
     draw.text(posicion_texto_adicional, texto_adicional, fill="white", font=fuente_adicional)
+
+    # Variables para espaciado y padding
+    padding_x = 30
+    padding_y = 20
+    separacion_vertical = 25
+    radius = 10
+
+    # Hora del torneo
+    texto_hora = f"Hora del Torneo: {hora}"
+    ancho_texto_hora, alto_texto_hora = draw.textsize(texto_hora, font=fuente_info)
+    rect_x1 = (fondo.width - ancho_texto_hora) // 2 - padding_x
+    rect_y1 = 500 + alto_texto + separacion_vertical
+    rect_x2 = rect_x1 + ancho_texto_hora + padding_x * 2
+    rect_y2 = rect_y1 + alto_texto_hora + padding_y * 2
+
+    draw.rounded_rectangle([rect_x1, rect_y1, rect_x2, rect_y2], radius=radius, fill="white")
+    posicion_hora_texto = ((fondo.width - ancho_texto_hora) // 2, rect_y1 + (rect_y2 - rect_y1 - alto_texto_hora) // 2)
+    draw.text(posicion_hora_texto, texto_hora, fill="black", font=fuente_info)
+
+    # Modalidad
+    texto_modalidad = modalidad
+    ancho_texto_modalidad, alto_texto_modalidad = draw.textsize(texto_modalidad, font=fuente_info)
+    rect_mod_x1 = (fondo.width - ancho_texto_modalidad) // 2 - padding_x
+    rect_mod_y1 = rect_y2 + separacion_vertical
+    rect_mod_x2 = rect_mod_x1 + ancho_texto_modalidad + padding_x * 2
+    rect_mod_y2 = rect_mod_y1 + alto_texto_modalidad + padding_y * 2
+
+    draw.rounded_rectangle([rect_mod_x1, rect_mod_y1, rect_mod_x2, rect_mod_y2], radius=radius, fill="white")
+    posicion_modalidad_texto = ((fondo.width - ancho_texto_modalidad) // 2, rect_mod_y1 + (rect_mod_y2 - rect_mod_y1 - alto_texto_modalidad) // 2)
+    draw.text(posicion_modalidad_texto, texto_modalidad, fill="black", font=fuente_info)
+
+    # Alcance (NUEVO debajo de modalidad)
+    texto_alcance = f"{alcance}"
+    ancho_texto_alcance, alto_texto_alcance = draw.textsize(texto_alcance, font=fuente_guia_inscripcion)
+    rect_alc_x1 = (fondo.width - ancho_texto_alcance) // 2 - padding_x
+    rect_alc_y1 = rect_mod_y2 + separacion_vertical
+    rect_alc_x2 = rect_alc_x1 + ancho_texto_alcance + padding_x * 2
+    rect_alc_y2 = rect_alc_y1 + alto_texto_alcance + padding_y * 2
+
+    draw.rounded_rectangle([rect_alc_x1, rect_alc_y1, rect_alc_x2, rect_alc_y2], radius=radius, fill="white")
+    posicion_alcance_texto = ((fondo.width - ancho_texto_alcance) // 2, rect_alc_y1 + (rect_alc_y2 - rect_alc_y1 - alto_texto_alcance) // 2)
+    draw.text(posicion_alcance_texto, texto_alcance, fill="black", font=fuente_guia_inscripcion)
+
+    # ID del torneo (parte inferior izquierda)
     texto_id = f"ID del Torneo: {id_torneo}"
     posicion_id = (25, fondo.height - 175)
     draw.text(posicion_id, texto_id, fill="white", font=fuente_info)
+
+    # Guía de inscripción
     texto_guia_inscripcion = f"Para inscribirte envía: !registrar {id_torneo}"
     posicion_texto_guia_inscripcion = (25, fondo.height - 75)
     draw.text(posicion_texto_guia_inscripcion, texto_guia_inscripcion, fill="white", font=fuente_guia_inscripcion)
+
+    # Costo en la esquina superior derecha
     texto_costo = f"Costo: {costo}"
-    ancho_texto_costo, alto_texto_costo = draw.textsize(texto_costo, font=fuente_info)
+    ancho_texto_costo, _ = draw.textsize(texto_costo, font=fuente_info)
     posicion_costo = (fondo.width - ancho_texto_costo - 25, 25)
-    posicion_alcance = (fondo.width - ancho_texto_alcance - 25, 100)
     draw.text(posicion_costo, texto_costo, fill="white", font=fuente_info)
-    draw.text(posicion_alcance, texto_alcance, fill="white", font=fuente_guia_inscripcion)
+
+    # Guardar imagen
     fondo.save(output_filename)
     fondo.close()
 
