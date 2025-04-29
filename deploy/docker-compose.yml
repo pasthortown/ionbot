@@ -1,0 +1,71 @@
+version: '3'
+
+networks:
+  tournament_net:
+    ipam:
+      config:
+        - subnet: 192.168.124.0/24
+
+services:
+  web:
+    image: httpd:latest
+    restart: always
+    ports:
+    - "80:80"
+    volumes:
+    - ./web/htdocs:/usr/local/apache2/htdocs/
+    networks:
+      tournament_net:
+        ipv4_address: 192.168.124.10
+    environment:
+      TZ: America/Bogota
+  mongo:
+    image: mongo:4.2.0
+    restart: always
+    volumes: 
+    - ./bdd/mongo_data:/data/db
+    env_file:
+    - ./variables.env
+    networks:
+      tournament_net:
+        ipv4_address: 192.168.124.11
+  mongo_express:
+    image: mongo-express:latest
+    restart: always
+    ports:
+    - "9070:8081"
+    env_file:
+    - ./variables.env
+    environment:
+      ME_CONFIG_MONGODB_SERVER: mongo
+    networks:
+      tournament_net:
+        ipv4_address: 192.168.124.12
+    links:
+    - mongo
+  backend:
+    image: tournament_backend:latest
+    restart: always
+    ports:
+    - 8154:5050
+    env_file:
+      - variables.env
+    networks:
+      tournament_net:
+        ipv4_address: 192.168.124.13
+    links:
+    - mongo
+  bot:
+    image: tournament_bot:latest
+    restart: always
+    volumes:
+    - ./imagenes:/usr/src/app/imagenes
+    env_file:
+      - variables.env
+    networks:
+      tournament_net:
+        ipv4_address: 192.168.124.14
+    links:
+    - backend
+    extra_hosts:
+    - "solution:192.168.124.10"

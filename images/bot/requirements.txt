@@ -1,0 +1,6 @@
+discord.py==2.3.2
+PyJWT==2.6.0
+pillow==9.3.0
+requests==2.31.0
+python-dotenv==1.0.1
+pandas

@@ -1,0 +1,22 @@
+version: '3'
+
+networks:
+  tournament_admin_net:
+    ipam:
+      config:
+        - subnet: 192.168.81.0/24
+
+services:
+  backend:
+    image: tournament_backend:latest
+    build:
+      context: .
+      dockerfile: backend.dockerfile
+    restart: always
+    ports:
+    - 8154:5050
+    env_file:
+      - variables.env
+    networks:
+      tournament_admin_net:
+        ipv4_address: 192.168.81.11

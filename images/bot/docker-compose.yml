@@ -1,0 +1,21 @@
+version: '3'
+
+networks:
+  tournament_bot_net:
+    ipam:
+      config:
+        - subnet: 192.168.82.0/24
+
+services:
+  bot:
+    image: tournament_bot:latest
+    build:
+      context: .
+      dockerfile: bot.dockerfile
+    volumes:
+    - ./imagenes:/usr/src/app/imagenes
+    env_file:
+      - variables.env
+    networks:
+      tournament_bot_net:
+        ipv4_address: 192.168.82.11
