@@ -17,6 +17,7 @@ export class AppComponent implements OnInit {
   fullname: string = "";
   telefono_celular: string = "";
   correo_electronico: string = "";
+  licencia_jugador: string = "";
   validate_file_size: boolean = true;
   validate_file_type: boolean = true;
   inscrito: boolean = false;
@@ -123,6 +124,7 @@ export class AppComponent implements OnInit {
         fullname: this.fullname,
         telefono_celular: this.telefono_celular,
         correo_electronico: this.correo_electronico,
+        licencia_jugador: this.licencia_jugador,
         valor_deposito: this.valor_deposito,
         aprobado: false,
         file_id: '',
@@ -141,6 +143,7 @@ export class AppComponent implements OnInit {
           this.fullname = "";
           this.telefono_celular = "";
           this.correo_electronico = "";
+          this.licencia_jugador = "";
           this.valor_deposito = 0;
           this.file = null;
           this.inscrito = true;
@@ -156,6 +159,7 @@ export class AppComponent implements OnInit {
           fullname: this.fullname,
           telefono_celular: this.telefono_celular,
           correo_electronico: this.correo_electronico,
+          licencia_jugador: this.licencia_jugador,
           valor_deposito: this.valor_deposito,
           aprobado: false,
           file_id: file_id,
@@ -174,6 +178,7 @@ export class AppComponent implements OnInit {
             this.fullname = "";
             this.telefono_celular = "";
             this.correo_electronico = "";
+            this.licencia_jugador = "";
             this.valor_deposito = 0;
             this.file = null;
             this.inscrito = true;

@@ -56,6 +56,10 @@
           <input type="email" class="form-control" id="correoElectronico" name="correoElectronico" placeholder="ejemplo@correo.com" [(ngModel)]="correo_electronico">
           <div *ngIf="!correo_electronico" class="text-danger mt-1" style="font-size: 0.9em;">El campo es obligatorio</div>
         </div>
+        <div class="mb-3">
+          <label for="licencia" class="form-label"><b>No. Licencia Jugador (Asociación/Federación)</b></label>
+          <input type="text" class="form-control" id="licencia" name="licencia" placeholder="XXXX-XXXXX-XXXXX" [(ngModel)]="licencia_jugador">
+        </div>
         <div style="width: 100%; border-bottom: 1px solid silver; margin-bottom: 10px; font-size: 24px;">Recargar Saldo</div>
         <div class="row mb-3">
           <div class="col">

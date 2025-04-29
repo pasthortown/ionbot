@@ -11,6 +11,7 @@
           <th><small>Nombre Completo</small></th>
           <th><small>Usuario Discord</small></th>
           <th><small>Correo Electrónico</small></th>
+          <th><small>Licencia Jugador (Asociación/Federación)</small></th>
           <th><small>Teléfono Celular</small></th>
           <th><small>Fecha Evento</small></th>
           <th><small>País</small></th>
@@ -28,6 +29,7 @@
           <td><a (click)="show_modal_usuario(deposito, modal_jugador)" style="cursor: pointer; color: blue;">{{ deposito.fullname }}</a></td>
           <td><a (click)="show_modal_usuario(deposito, modal_jugador)" style="cursor: pointer; color: blue;">{{ deposito.usuario_discord }}</a></td>
           <td>{{ deposito.correo_electronico }}</td>
+          <td>{{ deposito.licencia_jugador }}</td>
           <td>{{ deposito.telefono_celular }}</td>
           <td>{{ deposito.torneo.fecha }}</td>
           <td>{{ deposito.torneo.pais }}</td>
@@ -78,6 +80,10 @@
         <label for="saldo" class="form-label"><b>Correo Electrónico</b></label>
         <label class="form-control" id="saldo" name="saldo">{{ deposito_selected.correo_electronico }}</label>
       </div>
+      <div class="col-12">
+       <label for="saldo" class="form-label"><b>Licencia Jugador (Asoicación/Federación)</b></label>
+       <label class="form-control" id="saldo" name="saldo">{{ deposito_selected.licencia_jugador }}</label>
+     </div>
       <div class="col-12">
         <label for="saldo" class="form-label"><b>Teléfono Celular</b></label>
         <label class="form-control" id="saldo" name="saldo">{{ deposito_selected.telefono_celular }}</label>

@@ -46,6 +46,7 @@ export class AppComponent implements OnInit{
         fullname: 1,
         telefono_celular: 1,
         correo_electronico: 1,
+        licencia_jugador: 1,
         valor_deposito: 1,
         aprobado: 1,
         file_id: 1,
