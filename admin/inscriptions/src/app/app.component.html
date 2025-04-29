@@ -1,0 +1,93 @@
+<ngx-spinner bdColor="rgba(0, 0, 0, 0.8)"  size="medium" color="rgb(37, 219, 210)" type="ball-scale-multiple" [fullScreen] = "true">
+  <p style="color: white" > Cargando información, por favor espere... </p>
+</ngx-spinner>
+<div class="background-container">
+  <div class="content-container" *ngIf="inscrito">
+    <h1 class="col-12 text-center">Hemos recibido satisfactoriamente la información y puede cerrar esta ventana!!!</h1>
+    <h3 class="col-12 text-center">Nuestro equipo validará su solicitud en la brevedad posible.</h3>
+  </div>
+  <div class="content-container" *ngIf="!inscrito">
+    <h2 class="text-center">Inscripción en Torneo</h2>
+    <div class="row mb-3">
+      <div class="col-12 text-center">
+        <small><b>Fecha: </b>{{torneo.fecha}} <b>País: </b>{{torneo.pais}} <b>Juego: </b>{{torneo.juego}}-{{torneo.plataforma}}</small>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-12">
+        <div class="row mb-3">
+          <div class="col-sm-12 col-lg">
+            <label for="usuarioDiscord" class="form-label"><b>Usuario Discord</b></label>
+            <input type="text" class="form-control" id="usuarioDiscord" name="usuarioDiscord" placeholder="Usuario de Discord" [(ngModel)]="usuario_discord" disabled>
+          </div>
+          <div class="col-sm-12 col-lg">
+            <label for="idDiscord" class="form-label"><b>ID Discord</b></label>
+            <input type="text" class="form-control" id="idDiscord" name="idDiscord" placeholder="ID de Discord" [(ngModel)]="id_discord" disabled>
+          </div>
+          <div class="col-sm-12 col-lg">
+            <label for="idTorneo" class="form-label"><b>ID Torneo</b></label>
+            <input type="text" class="form-control" id="idTorneo" name="idTorneo" placeholder="ID de Torneo" [(ngModel)]="id_torneo" disabled>
+          </div>
+        </div>
+        <div class="row mb-3">
+          <div class="col-sm-12 col-lg-6">
+            <label for="saldo" class="form-label"><b>Saldo</b></label>
+            <label class="form-control" id="saldo" name="saldo">{{saldo | number:'1.2-2'}}</label>
+          </div>
+          <div class="col-sm-12 col-lg-6">
+            <label for="value_tornaument" class="form-label"><b>Costo Inscripción</b></label>
+            <label class="form-control" id="value_tornaument" name="value_tornaument">{{value_tornaument | number:'1.2-2'}}</label>
+          </div>
+        </div>
+        <div class="row mb-3">
+          <div class="col-sm-12 col-lg-6">
+            <label for="fullName" class="form-label"><b>Nombre Completo</b></label>
+            <input type="text" class="form-control" id="fullName" name="fullName" placeholder="Escribe tu Nombre Completo" [(ngModel)]="fullname">
+            <div *ngIf="!fullname" class="text-danger mt-1" style="font-size: 0.9em;">El campo es obligatorio</div>
+          </div>
+          <div class="col-sm-12 col-lg-6">
+            <label for="telefonoCelular" class="form-label"><b>Teléfono Celular</b></label>
+            <input type="tel" class="form-control" id="telefonoCelular" name="telefonoCelular" placeholder="Escribe tu Teléfono Celular" [(ngModel)]="telefono_celular">
+            <div *ngIf="!telefono_celular" class="text-danger mt-1" style="font-size: 0.9em;">El campo es obligatorio</div>
+          </div>
+        </div>
+        <div class="mb-3">
+          <label for="correoElectronico" class="form-label"><b>Correo Electrónico</b></label>
+          <input type="email" class="form-control" id="correoElectronico" name="correoElectronico" placeholder="ejemplo@correo.com" [(ngModel)]="correo_electronico">
+          <div *ngIf="!correo_electronico" class="text-danger mt-1" style="font-size: 0.9em;">El campo es obligatorio</div>
+        </div>
+        <div style="width: 100%; border-bottom: 1px solid silver; margin-bottom: 10px; font-size: 24px;">Recargar Saldo</div>
+        <div class="row mb-3">
+          <div class="col">
+            <label for="valorDeposito" class="form-label"><b>Valor Depósito</b></label>
+            <input type="number" step="0.01" class="form-control" id="valorDeposito" name="valorDeposito" placeholder="Ingrese el valor del depósito" [(ngModel)]="valor_deposito">
+          </div>
+        </div>
+        <div class="mb-3">
+          <label for="comprobanteDeposito" class="form-label"><b>Comprobante Depósito <span *ngIf="!validate_file_size" style="color: red;">*El tamaño del archivo supera los 10MB</span><span *ngIf="!validate_file_type" style="color: red;">*El tipo de archivo no es admitido</span></b></label>
+          <ngx-file-drop dropZoneLabel="Drop files here" (onFileDrop)="dropped($event)" accept="'image/*'">
+            <ng-template ngx-file-drop-content-tmp let-openFileSelector="openFileSelector">
+              <p class="col-12 text-center" (click)="openFileSelector()">
+                <span>
+                  <small *ngIf="file == null">Arrastre aquí el archivo del comprobante del depósito.<br/>
+                    Se acepta máximo 20MB por cada Archivo.<br/>
+                  </small>
+                  <small *ngIf="file !== null">{{this.file.name}} ( {{this.file.size_show}} )<br/>
+                  </small>
+                </span>
+              </p>
+            </ng-template>
+          </ngx-file-drop>
+        </div>
+        <div class="alert alert-danger" role="alert" *ngIf="value_tornaument > (saldo + valor_deposito)">
+          El saldo es menor al costo de inscripción, por favor realiza una recarga
+        </div>
+        <button class="btn btn-primary" *ngIf="((value_tornaument <= (saldo + valor_deposito)) || (file && validate_file_type))
+                                                  && fullname && telefono_celular && correo_electronico"
+         (click)="enviar_solicitud()">
+          <i class="fas fa-paper-plane"></i> Enviar
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

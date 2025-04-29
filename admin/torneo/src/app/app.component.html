@@ -1,0 +1,68 @@
+<ngx-spinner bdColor="rgba(0, 0, 0, 0.8)"  size="medium" color="rgb(37, 219, 210)" type="ball-scale-multiple" [fullScreen]="true">
+  <p style="color: white" > Cargando información, por favor espere... </p>
+</ngx-spinner>
+<div class="background-container">
+  <div class="content-container" *ngIf="torneo != null">
+    <h2 class="text-center">Detalle del Torneo {{id_torneo}} <span *ngIf="torneo.observacion"><i class="fas fa-times" style="color: red"></i></span><span *ngIf="!torneo.observacion"><i class="fas fa-check" style="color: green"></i></span></h2>
+    <div class="row">
+      <div class="col-12 col-md-4">
+        <label for="fecha"><b>Fecha:</b></label>
+        <label class="form-control" id="fecha">{{torneo.fecha}}</label>
+      </div>
+      <div class="col-12 col-md-4">
+        <label for="pais"><b>País:</b></label>
+        <label class="form-control" id="pais">{{torneo.pais}}</label>
+      </div>
+      <div class="col-12 col-md-4">
+        <label for="juego"><b>Juego:</b></label>
+        <label class="form-control" id="juego">{{torneo.juego}} - {{torneo.plataforma}}</label>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-12 col-md-4">
+        <label for="estado"><b>Estado:</b></label>
+        <label class="form-control" id="estado">{{torneo.estado}}</label>
+      </div>
+      <div class="col-12 col-md-4">
+        <label for="costo"><b>Costo de Participación:</b></label>
+        <label class="form-control" id="costo">{{torneo.costo}}</label>
+      </div>
+      <div class="col-12 col-md-4">
+        <label for="canal"><b>Canal de Discord:</b></label>
+        <label class="form-control" id="canal">{{torneo.channel}}</label>
+      </div>
+    </div>
+    <hr class="mt-2">
+    <div class="row" *ngFor="let etapa of torneo.etapas">
+      <div class="col-12">
+        <div class="row">
+          <h4 class="col-12">Etapa {{etapa.index}}</h4>
+        </div>
+        <div class="row">
+          <div class="col-12" style="overflow: auto;">
+            <table class="table table-light" style="min-width: 800px;">
+              <thead>
+                <th>Fecha</th>
+                <th>Competidores</th>
+                <th>Código</th>
+                <th>Ganador</th>
+              </thead>
+              <tbody>
+                <tr *ngFor="let enfrentamiento of etapa.enfrentamientos">
+                  <td>{{enfrentamiento.fecha_enfrentamiento}}</td>
+                  <td><span *ngFor="let competidor of enfrentamiento.competidores"> (<span *ngIf="competidor.puntaje != null">{{competidor.puntaje}}</span><span *ngIf="competidor.puntaje == null">0</span>) {{competidor.jugador.usuario_discord}}</span></td>
+                  <td>{{enfrentamiento.codigo_enfrentamiento}}</td>
+                  <td><span *ngIf="enfrentamiento.ganador != null">{{enfrentamiento.ganador.usuario_discord}}</span><span *ngIf="enfrentamiento.ganador == null">Por Definir</span></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="row" *ngIf="torneo.estado == 'cerrado'">
+      <div class="col-6" style="text-align: right;"><b><h2>Ganador:</h2></b></div>
+      <div class="col-6" style="text-align: left;"><b><h2>{{torneo.etapas[torneo.etapas.length - 1].enfrentamientos[0].ganador.usuario_discord}}</h2></b></div>
+    </div>
+  </div>
+</div>

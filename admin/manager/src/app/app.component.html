@@ -1,0 +1,91 @@
+<ngx-spinner bdColor="rgba(0, 0, 0, 0.8)"  size="medium" color="rgb(37, 219, 210)" type="ball-scale-multiple" [fullScreen] = "true">
+  <p style="color: white" > Cargando información, por favor espere... </p>
+</ngx-spinner>
+<div class="row m-2">
+  <div class="col-12">
+    <h1>Administración de Depósitos</h1>
+    <table class="table table-light table-hover table-striped">
+      <thead>
+        <tr>
+          <th><small>Fecha Depósito</small></th>
+          <th><small>Nombre Completo</small></th>
+          <th><small>Usuario Discord</small></th>
+          <th><small>Correo Electrónico</small></th>
+          <th><small>Teléfono Celular</small></th>
+          <th><small>Fecha Evento</small></th>
+          <th><small>País</small></th>
+          <th><small>Juego</small></th>
+          <th><small>Pataforma</small></th>
+          <th><small>Costo Inscripción</small></th>
+          <th><small>Valor Depósito</small></th>
+          <th><small>Comprobante</small></th>
+          <th><small>Aprobado</small></th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let deposito of depositos">
+          <td>{{ deposito.timestamp }}</td>
+          <td><a (click)="show_modal_usuario(deposito, modal_jugador)" style="cursor: pointer; color: blue;">{{ deposito.fullname }}</a></td>
+          <td><a (click)="show_modal_usuario(deposito, modal_jugador)" style="cursor: pointer; color: blue;">{{ deposito.usuario_discord }}</a></td>
+          <td>{{ deposito.correo_electronico }}</td>
+          <td>{{ deposito.telefono_celular }}</td>
+          <td>{{ deposito.torneo.fecha }}</td>
+          <td>{{ deposito.torneo.pais }}</td>
+          <td>{{ deposito.torneo.juego }}</td>
+          <td>{{ deposito.torneo.plataforma }}</td>
+          <td>{{ deposito.costo_evento | number:'1.2-2'}}</td>
+          <td>{{ deposito.valor_deposito | number:'1.2-2'}}</td>
+          <td>
+            <button type="button" class="btn btn-dark col-12" (click)="get_deposito_file(deposito.file_id, modal_comprobante)">
+              <i class="fas fa-file"></i>
+            </button>
+          <td>
+            <button type="button" class="btn btn-danger col-12" *ngIf="!deposito.aprobado" (click)="aprobar(deposito)">
+              <i class="fas fa-times"></i>
+            </button>
+            <button type="button" class="btn btn-success col-12" *ngIf="deposito.aprobado" (click)="rechazar(deposito)">
+              <i class="fas fa-check"></i>
+            </button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+<ng-template #modal_comprobante let-modal>
+  <div class="modal-header">
+		<h4 class="modal-title" id="modal-basic-title">Comprobante</h4>
+		<button type="button" class="btn-close" aria-label="Close" (click)="modal.dismiss('Cross click')"></button>
+	</div>
+  <div class="modal-body">
+     <div class="row">
+       <img class='col-12' id='base64image' src='data:{{deposito_file.type}};base64,{{deposito_file.file_base64}}' />
+     </div>
+  </div>
+</ng-template>
+<ng-template #modal_jugador let-modal>
+  <div class="modal-header">
+		<h4 class="modal-title" id="modal-basic-title">Datos Jugador: {{ deposito_selected.usuario_discord }}</h4>
+		<button type="button" class="btn-close" aria-label="Close" (click)="modal.dismiss('Cross click')"></button>
+	</div>
+  <div class="modal-body">
+     <div class="row">
+       <div class="col-12">
+         <label for="saldo" class="form-label"><b>Nombre Completo</b></label>
+         <label class="form-control" id="saldo" name="saldo">{{ deposito_selected.fullname }}</label>
+       </div>
+       <div class="col-12">
+        <label for="saldo" class="form-label"><b>Correo Electrónico</b></label>
+        <label class="form-control" id="saldo" name="saldo">{{ deposito_selected.correo_electronico }}</label>
+      </div>
+      <div class="col-12">
+        <label for="saldo" class="form-label"><b>Teléfono Celular</b></label>
+        <label class="form-control" id="saldo" name="saldo">{{ deposito_selected.telefono_celular }}</label>
+      </div>
+      <div class="col-12">
+        <label for="saldo" class="form-label"><b>Saldo</b></label>
+        <label class="form-control" id="saldo" name="saldo">{{ deposito_selected.saldo }}</label>
+      </div>
+     </div>
+  </div>
+</ng-template>
