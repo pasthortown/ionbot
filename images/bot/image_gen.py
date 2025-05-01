@@ -40,6 +40,10 @@ def generar_imagen_enfrentamiento(juego, jugador_a, jugador_b, fecha_texto, codi
     vs_imagen.close()
 
 def generar_imagen_campeon(player_avatar_base64, player_name, torneo, nombre_imagen_winner_card):
+    from PIL import Image, ImageDraw, ImageFont, ImageOps
+    import base64
+    from io import BytesIO
+
     juego = torneo['juego']
     pais = torneo['pais']
     fecha = torneo['fecha']
@@ -53,18 +57,17 @@ def generar_imagen_campeon(player_avatar_base64, player_name, torneo, nombre_ima
     fuente_main = ImageFont.truetype("/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf", size=150)
     fuente_secondary = ImageFont.truetype("/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf", size=60)
     fuente_info = ImageFont.truetype("/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf", size=30)
+    fuente_plataforma = ImageFont.truetype("/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf", size=50)
 
-    texto_juego_plataforma = f"{juego} - {plataforma}"
+    texto_juego_plataforma = f"{juego}"
     ancho_texto, _ = draw.textsize(texto_juego_plataforma, font=fuente_main)
     posicion_juego_plataforma = ((fondo.width - ancho_texto) // 2, 50)
     draw.text(posicion_juego_plataforma, texto_juego_plataforma, fill="white", font=fuente_main)
 
-    # Decodificar y procesar imagen del jugador
     player_avatar_bytes = base64.b64decode(player_avatar_base64)
     player_avatar = Image.open(BytesIO(player_avatar_bytes))
     player_avatar = player_avatar.resize((600, 600))
 
-    # Redondear imagen del jugador
     mask = Image.new('L', player_avatar.size, 0)
     draw_mask = ImageDraw.Draw(mask)
     draw_mask.ellipse((0, 0) + player_avatar.size, fill=255)
@@ -92,9 +95,27 @@ def generar_imagen_campeon(player_avatar_base64, player_name, torneo, nombre_ima
     draw.text(posicion_campeon, texto_campeon, fill="white", font=fuente_main)
 
     texto_torneo = f"TORNEO - {id_torneo}"
-    ancho_texto_torneo, _ = draw.textsize(texto_torneo, font=fuente_secondary)
+    ancho_texto_torneo, alto_texto_torneo = draw.textsize(texto_torneo, font=fuente_secondary)
     posicion_torneo = ((fondo.width - ancho_texto_torneo) // 2, posicion_campeon[1] + 150)
     draw.text(posicion_torneo, texto_torneo, fill="white", font=fuente_secondary)
+
+    # Plataforma como cápsula debajo del texto TORNEO - id_torneo
+    padding_x = 30
+    padding_y = 15
+    separacion_vertical_capsula = 25 + 30  # 30px adicionales
+    radius = 20
+
+    texto_plataforma = plataforma
+    ancho_texto_plataforma, alto_texto_plataforma = draw.textsize(texto_plataforma, font=fuente_plataforma)
+
+    rect_x1 = (fondo.width - ancho_texto_plataforma) // 2 - padding_x
+    rect_y1 = posicion_torneo[1] + alto_texto_torneo + separacion_vertical_capsula
+    rect_x2 = rect_x1 + ancho_texto_plataforma + padding_x * 2
+    rect_y2 = rect_y1 + alto_texto_plataforma + padding_y * 2
+
+    draw.rounded_rectangle([rect_x1, rect_y1, rect_x2, rect_y2], radius=radius, fill="white")
+    posicion_texto_plataforma = ((fondo.width - ancho_texto_plataforma) // 2, rect_y1 + (rect_y2 - rect_y1 - alto_texto_plataforma) // 2)
+    draw.text(posicion_texto_plataforma, texto_plataforma, fill="black", font=fuente_plataforma)
 
     margen_inferior_izquierdo = 25
     ancho_texto_pais, _ = draw.textsize(pais, font=fuente_secondary)
@@ -114,6 +135,7 @@ def generar_imagen_campeon(player_avatar_base64, player_name, torneo, nombre_ima
 
     fondo.save(nombre_imagen_winner_card)
     fondo.close()
+
 
 def generar_imagen_torneo(fecha, juego, pais, plataforma, modalidad, hora, id_torneo, alcance, costo, output_filename):
     fondo = Image.open("imagenes/tournament.jpg")
