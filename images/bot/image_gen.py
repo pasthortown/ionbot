@@ -40,10 +40,6 @@ def generar_imagen_enfrentamiento(juego, jugador_a, jugador_b, fecha_texto, codi
     vs_imagen.close()
 
 def generar_imagen_campeon(player_avatar_base64, player_name, torneo, nombre_imagen_winner_card):
-    from PIL import Image, ImageDraw, ImageFont, ImageOps
-    import base64
-    from io import BytesIO
-
     juego = torneo['juego']
     pais = torneo['pais']
     fecha = torneo['fecha']
