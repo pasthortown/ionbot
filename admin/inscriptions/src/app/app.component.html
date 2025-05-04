@@ -65,6 +65,9 @@
           <div class="col">
             <label for="valorDeposito" class="form-label"><b>Valor Depósito</b></label>
             <input type="number" step="0.01" class="form-control" id="valorDeposito" name="valorDeposito" placeholder="Ingrese el valor del depósito" [(ngModel)]="valor_deposito">
+            <div *ngIf="valor_deposito < 0" class="text-danger mt-1" style="font-size: 0.9em;">
+              Valor ingresado incorrecto
+            </div>
           </div>
         </div>
         <div class="mb-3">
@@ -87,7 +90,7 @@
           El saldo es menor al costo de inscripción, por favor realiza una recarga
         </div>
         <button class="btn btn-primary" *ngIf="((value_tornaument <= (saldo + valor_deposito)) || (file && validate_file_type))
-                                                  && fullname && telefono_celular && correo_electronico"
+                                                  && fullname && telefono_celular && correo_electronico && valor_deposito >= 0"
          (click)="enviar_solicitud()">
           <i class="fas fa-paper-plane"></i> Enviar
         </button>
