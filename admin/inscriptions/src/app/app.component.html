@@ -60,6 +60,11 @@
           <label for="licencia" class="form-label"><b>No. Licencia Jugador (Asociación/Federación)</b></label>
           <input type="text" class="form-control" id="licencia" name="licencia" placeholder="XXXX-XXXXX-XXXXX" [(ngModel)]="licencia_jugador">
         </div>
+        <div class="col-12" *ngIf="saldo >= value_tornaument">
+          <div class="alert alert-warning" role="alert">
+            Su saldo es suficiente para inscribirse en el torneo deseado, no es necesario que realice una recarga. Simplemente haga clic en el botón "Enviar" para continuar con la inscripción.
+          </div>
+        </div>
         <div style="width: 100%; border-bottom: 1px solid silver; margin-bottom: 10px; font-size: 24px;">Recargar Saldo</div>
         <div class="row mb-3">
           <div class="col">
