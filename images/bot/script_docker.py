@@ -15,9 +15,7 @@ import base64
 import pandas as pd
 
 palabras_clave_saludo = [
-    "bot",
-    "información",
-    "info"
+    "botinfo"
 ]
 
 app_secret = os.getenv('app_secret')
@@ -648,7 +646,7 @@ async def mi_status_completo(ctx):
     await ctx.send(tabla_depositos)
 
 @bot.command()
-async def info(ctx):
+async def botinfo(ctx):
     await ctx.send(embed=await describirse()) 
 
 @bot.command()
