@@ -78,24 +78,28 @@ async def ranking(ctx, clave: str):
                 puntajes[fecha_torneo] = {}
 
             # Recorrer las etapas y enfrentamientos
-            for etapa in torneo['etapas']:
-                for enfrentamiento in etapa['enfrentamientos']:
-                    ganador_id = enfrentamiento['ganador']['id_discord']
-                    for competidor in enfrentamiento['competidores']:
-                        jugador_id = competidor['jugador']['id_discord']
+            for etapa in torneo.get('etapas', []):
+                for enfrentamiento in etapa.get('enfrentamientos', []):
+                    en_espera = enfrentamiento.get('en_espera', False)
+                    ganador = enfrentamiento.get('ganador')
+
+                    # Registrar participantes del enfrentamiento (aunque sea un "bye")
+                    for competidor in enfrentamiento.get('competidores', []):
                         jugador_nombre = competidor['jugador']['usuario_discord']
-                        
-                        # Añadir todos los jugadores a la lista de participantes
                         participantes.add(jugador_nombre)
-                        
-                        # Inicializar puntaje en 0 si no existe para este torneo
                         if jugador_nombre not in puntajes[fecha_torneo]:
                             puntajes[fecha_torneo][jugador_nombre] = 0
 
-                        # Asignar puntaje basado en si es ganador o perdedor
-                        if jugador_id == ganador_id:
+                        # Sumar puntos SOLO si:
+                        # - existe ganador
+                        # - el enfrentamiento NO fue en_espera (bye)
+                        # - este competidor es el ganador
+                        if (
+                            ganador is not None
+                            and not en_espera
+                            and competidor['jugador']['id_discord'] == ganador.get('id_discord')
+                        ):
                             puntajes[fecha_torneo][jugador_nombre] += 3
-                        # Si el jugador pierde, el puntaje sigue en 0 (ya está inicializado en 0)
 
         # Crear un DataFrame para organizar los datos
         participantes = sorted(participantes)
@@ -260,12 +264,16 @@ async def iniciar_torneo(ctx, torneo_id, fecha_enfrentamiento: str, hora_enfrent
                     break
                 intentos += 1
             enfrentamientos = definir_enfrentamientos(participantes, fecha_hora_formateada, torneo_id, 0)
+            # Aqui se agrego en_espera porque se crea el enfrentamiento
+            for enf in enfrentamientos:
+                enf['en_espera'] = False
             if competidor_espera:
                 enfrentamientos.append({
-                    "competidores": [{'jugador':competidor_espera, 'puntaje': 1, 'puntaje_contendiente': 0}, {'jugador':competidor_espera, 'puntaje': 0, 'puntaje_contendiente': 1}],
+                    "competidores": [{'jugador':competidor_espera, 'puntaje': 0, 'puntaje_contendiente': 0}, {'jugador':competidor_espera, 'puntaje': 0, 'puntaje_contendiente': 0}],
                     "ganador": competidor_espera,
                     "fecha_enfrentamiento": fecha_hora_formateada,
-                    "codigo_enfrentamiento": f"automatico_1"
+                    "codigo_enfrentamiento": f"automatico_1",
+                    "en_espera": True  # Aqui se agrego en_espera porque se crea el enfrentamiento (bye)
                 })
             etapas = [ { "index": 1, "enfrentamientos": enfrentamientos} ]
             torneo['etapas'] = etapas
@@ -289,7 +297,7 @@ async def iniciar_torneo(ctx, torneo_id, fecha_enfrentamiento: str, hora_enfrent
                     encuentro = ""
                     if enfrentamiento['codigo_enfrentamiento'] == 'automatico_1':
                         jugador = competidores[0]['jugador']['usuario_discord']
-                        puntaje = competidor['puntaje'] if competidor['puntaje'] is not None else '-'
+                        puntaje = competidores[0]['puntaje'] if competidores[0]['puntaje'] is not None else '-'
                         encuentro += f"{jugador}(EN ESPERA)"
                     else:
                         for competidor in competidores:
@@ -375,12 +383,16 @@ async def torneo_next(ctx, torneo_id, fecha_enfrentamiento: str, hora_enfrentami
                                 break
                             intentos += 1
                         nueva_etapa_enfrentamientos = definir_enfrentamientos(participantes_ganadores, fecha_hora_formateada, torneo_id, len(etapas))
+                        # Aqui se agrego en_espera porque se crea el enfrentamiento
+                        for enf in nueva_etapa_enfrentamientos:
+                            enf['en_espera'] = False
                         if competidor_espera:
                             nueva_etapa_enfrentamientos.append({
-                                "competidores": [{'jugador':competidor_espera, 'puntaje': 1, 'puntaje_contendiente': 0}, {'jugador':competidor_espera, 'puntaje': 0, 'puntaje_contendiente': 1}],
+                                "competidores": [{'jugador':competidor_espera, 'puntaje': 0, 'puntaje_contendiente': 0}, {'jugador':competidor_espera, 'puntaje': 0, 'puntaje_contendiente': 0}],
                                 "ganador": competidor_espera,
                                 "fecha_enfrentamiento": fecha_hora_formateada,
-                                "codigo_enfrentamiento": f"automatico_{nueva_etapa_index}"
+                                "codigo_enfrentamiento": f"automatico_{nueva_etapa_index}",
+                                "en_espera": True  # Aqui se agrego en_espera porque se crea el enfrentamiento (bye)
                             })
                         etapas.append({"index": nueva_etapa_index, "enfrentamientos": nueva_etapa_enfrentamientos})
                         torneo['etapas'] = etapas
@@ -403,7 +415,7 @@ async def torneo_next(ctx, torneo_id, fecha_enfrentamiento: str, hora_enfrentami
                                 encuentro = ""
                                 if enfrentamiento['codigo_enfrentamiento'] == f'automatico_{nueva_etapa_index}':
                                     jugador = competidores[0]['jugador']['usuario_discord']
-                                    puntaje = competidor['puntaje'] if competidor['puntaje'] is not None else '-'
+                                    puntaje = competidores[0]['puntaje'] if competidores[0]['puntaje'] is not None else '-'
                                     encuentro += f"{jugador}(EN ESPERA)"
                                 else:
                                     for competidor in competidores:
@@ -553,7 +565,7 @@ async def reportar_etapa(ctx, id_torneo, clave):
                 encuentro = ""
                 if enfrentamiento['codigo_enfrentamiento'] == 'automatico':
                     jugador = competidores[0]['jugador']['usuario_discord']
-                    puntaje = competidor['puntaje'] if competidor['puntaje'] is not None else '-'
+                    puntaje = competidores[0]['puntaje'] if competidores[0]['puntaje'] is not None else '-'
                     encuentro += f"{jugador}(EN ESPERA)"
                 else:
                     for competidor in competidores:
